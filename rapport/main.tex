@@ -1,0 +1,792 @@
+\documentclass[12pt,a4paper]{report}
+
+% ============================================================
+% Encodage et langue
+% ============================================================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{lmodern}
+
+% ============================================================
+% Mise en page
+% ============================================================
+\usepackage[top=2.5cm,bottom=2.5cm,left=2.8cm,right=2.8cm]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+
+% ============================================================
+% Graphiques et couleurs
+% ============================================================
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,positioning,shadows}
+
+% ============================================================
+% Code source
+% ============================================================
+\usepackage{listings}
+\usepackage{lstautogobble}
+
+\definecolor{codebg}{RGB}{245,245,248}
+\definecolor{codeframe}{RGB}{180,180,200}
+\definecolor{keyword}{RGB}{0,0,200}
+\definecolor{comment}{RGB}{60,140,60}
+\definecolor{string}{RGB}{180,0,0}
+\definecolor{myblue}{RGB}{30,80,160}
+\definecolor{mygreen}{RGB}{20,120,60}
+\definecolor{myred}{RGB}{180,30,30}
+\definecolor{mygray}{RGB}{100,100,100}
+
+\lstdefinestyle{cpp}{
+    language=C++,
+    backgroundcolor=\color{codebg},
+    frame=single,
+    rulecolor=\color{codeframe},
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{keyword}\bfseries,
+    commentstyle=\color{comment}\itshape,
+    stringstyle=\color{string},
+    numberstyle=\tiny\color{mygray},
+    numbers=left,
+    numbersep=8pt,
+    tabsize=4,
+    breaklines=true,
+    keepspaces=true,
+    showstringspaces=false,
+    autogobble=true,
+    morekeywords={uint32_t,uint8_t,int32_t,int64_t,double,float,nullptr,
+                  constexpr,static_assert,inline,override,noexcept,auto},
+    literate={é}{{\'{e}}}1 {è}{{\`{e}}}1 {ê}{{\^{e}}}1 {à}{{\`{a}}}1
+             {ù}{{\`{u}}}1 {ç}{{\c{c}}}1 {œ}{{\oe}}1 {â}{{\^{a}}}1
+             {î}{{\^{i}}}1 {û}{{\^{u}}}1 {É}{{\'E}}1,
+}
+\lstset{style=cpp}
+
+% ============================================================
+% Maths
+% ============================================================
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{bm}
+
+% ============================================================
+% Tableaux et boîtes
+% ============================================================
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+
+% Boîte info (bleue)
+\newtcolorbox{infobox}[1][]{
+    colback=blue!5, colframe=myblue, coltitle=white,
+    fonttitle=\bfseries\small, title={#1},
+    boxrule=0.8pt, arc=4pt, breakable
+}
+
+% Boîte résultat (verte)
+\newtcolorbox{resultbox}[1][]{
+    colback=green!5, colframe=mygreen, coltitle=white,
+    fonttitle=\bfseries\small, title={#1},
+    boxrule=0.8pt, arc=4pt
+}
+
+% Boîte attention (rouge)
+\newtcolorbox{warnbox}[1][Attention]{
+    colback=red!5, colframe=myred, coltitle=white,
+    fonttitle=\bfseries\small, title={#1},
+    boxrule=0.8pt, arc=4pt
+}
+
+% ============================================================
+% En-têtes et pied de pages
+% ============================================================
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[R]{\small\textcolor{mygray}{\leftmark}}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ============================================================
+% Table des matières et hyperliens
+% ============================================================
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=myblue,
+    urlcolor=myblue,
+    citecolor=mygreen,
+    pdftitle={AR From Scratch — Rapport Semaines 1 à 4},
+    pdfauthor={Étudiant — NkMath},
+}
+\usepackage{tocloft}
+
+% ============================================================
+% Numérotation des sections dans les chapitres
+% ============================================================
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{2}
+
+% ============================================================
+% Commandes personnalisées
+% ============================================================
+\newcommand{\module}[1]{\textbf{\textcolor{myblue}{#1}}}
+\newcommand{\code}[1]{\texttt{\textcolor{myblue}{#1}}}
+\newcommand{\file}[1]{\texttt{\textit{#1}}}
+\newcommand{\nkmath}{\textsc{NkMath}}
+\newcommand{\nkentseu}{\textsc{Nkentseu}}
+\newcommand{\jenga}{\textsc{Jenga}}
+
+% ============================================================
+% Document
+% ============================================================
+\begin{document}
+
+% ---- Page de titre ----
+\begin{titlepage}
+\begin{center}
+
+\vspace*{1.5cm}
+
+{\Huge \bfseries \textcolor{myblue}{Réalité Augmentée}\par}
+{\Huge \bfseries \textcolor{myblue}{From Scratch}\par}
+
+\vspace{0.5cm}
+\hrule height 2pt
+\vspace{0.5cm}
+
+{\LARGE Rapport de travaux pratiques}\par
+{\Large Semaines 1 à 4 — Semestre 1 : \nkmath}\par
+
+\vspace{1cm}
+
+{\large
+Modules couverts :
+\begin{itemize}
+    \item Module 01 — IEEE 754 \& Arithmétique Flottante
+    \item Module 02 — Vecteurs (Vec2d, Vec3d, Vec4d)
+    \item Module 03 — Matrices (Mat3d, Mat4d)
+    \item Module 04 — Quaternions
+\end{itemize}
+}
+
+\vspace{1cm}
+
+\begin{tabular}{ll}
+\textbf{Cours :}     & CODER POUR LA VR, L'XR ET L'AR II \\
+\textbf{Enseignant :} & TEUGUIA TADJUIDJE Rodolf Sédéris \\
+\textbf{Etudiant :}     & TAMBA MBE Yohan Miguel \\
+\textbf{Matricule :} & \textbf{22P005} \\
+\textbf{Outil build :} & \jenga{} (Python DSL multi-plateforme) \\
+\textbf{Framework :} & \nkentseu{} (C++ modulaire haute performance) \\
+\textbf{Règle :}     & Zéro bibliothèque tierce — C++17 + STL uniquement \\
+\end{tabular}
+
+\vfill{\large Annee academique 2025--2026}
+
+\end{center}
+\end{titlepage}
+
+% ---- Table des matières ----
+\tableofcontents
+\newpage
+
+% ============================================================
+\chapter*{Introduction générale}
+\addcontentsline{toc}{chapter}{Introduction générale}
+% ============================================================
+
+Ce rapport présente le travail réalisé dans le cadre du cours de \textbf{Réalité Augmentée From Scratch}. L'idée du cours est assez directe : construire tout ce qui est nécessaire pour faire de la réalité augmentée en partant de rien, sans utiliser aucune bibliothèque externe comme OpenCV, GLM ou Eigen. Uniquement le C++17 et la bibliothèque standard.
+
+Au début, j'avoue que ça m'a semblé un peu extrême. Pourquoi réimplémenter des choses qui existent déjà ? Mais en commençant à travailler sur le premier module (IEEE 754), j'ai rapidement compris l'intérêt : quand on implémente soi-même l'addition de Kahan ou la méthode de Welford, on comprend \textit{vraiment} pourquoi les erreurs d'arrondi peuvent faire planter une calibration de caméra. C'est impossible à comprendre vraiment si on se contente d'appeler \code{cv::calibrateCamera()}.
+
+\medskip
+
+\noindent\textbf{Ce que ce rapport couvre :} les quatre premières semaines du semestre 1, soit les modules 01 à 04 de la bibliothèque \nkmath{}. Pour chaque semaine, je présente les concepts appris, le code développé, et les travaux pratiques réalisés. Tout le code est intégré dans le framework \nkentseu{} du professeur et compilable avec \jenga{}.
+
+\medskip
+
+\begin{infobox}[Outils utilisés]
+\begin{itemize}
+    \item \textbf{\jenga{}} : système de build Python DSL multi-plateforme (conçu par le prof)
+    \item \textbf{\nkentseu{}} : framework C++ modulaire — on intègre notre \nkmath{} dedans
+    \item \textbf{NkTestFramework.h} : framework de test unitaire fourni par \nkentseu{}
+    \item \textbf{C++17 + STL} : rien d'autre, zéro bibliothèque tierce
+\end{itemize}
+\end{infobox}
+
+% ============================================================
+\chapter{Semaine 1 — IEEE 754 et Arithmétique Flottante}
+% ============================================================
+
+\section{Ce que j'ai appris}
+
+Le premier module parle de quelque chose qu'on utilise tous les jours sans y penser : les nombres flottants. En C++, quand on écrit \code{float x = 0.1f;}, on suppose que \code{x} vaut exactement 0.1. Mais ce n'est pas le cas du tout.
+
+\subsection{Structure d'un float IEEE 754}
+
+Un \code{float} 32 bits est en réalité un entier de 32 bits découpé en trois parties :
+
+\begin{center}
+\begin{tikzpicture}[font=\small]
+    \draw[fill=red!20] (0,0) rectangle (0.8,0.6);
+    \node at (0.4,0.3) {S};
+    \draw[fill=blue!20] (0.8,0) rectangle (4.0,0.6);
+    \node at (2.4,0.3) {Exposant (8 bits)};
+    \draw[fill=green!20] (4.0,0) rectangle (11.2,0.6);
+    \node at (7.6,0.3) {Mantisse (23 bits)};
+    \node at (0.4,1.0) {bit 31};
+    \node at (2.4,1.0) {bits 30--23};
+    \node at (7.6,1.0) {bits 22--0};
+\end{tikzpicture}
+\end{center}
+
+La valeur est calculée comme : $(-1)^{s} \times 2^{e-127} \times 1.\text{mantisse}$
+
+\medskip
+
+Donc \code{0.1f} n'est pas représentable exactement en binaire. Ce qu'on stocke, c'est
+$0.100000001490116\ldots$ — une approximation. Pour la plupart des usages c'est
+acceptable, mais dans notre pipeline AR, des erreurs qui s'accumulent peuvent faire
+diverger l'algorithme de calibration ou produire une pose décalée de plusieurs
+centimètres.
+
+\subsection{Valeurs spéciales}
+
+L'une des choses qui m'a le plus intéressé, c'est l'existence de valeurs spéciales réservées par le standard IEEE 754 :
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Valeur} & \textbf{Pattern bits} & \textbf{Comment obtenir} \\
+\midrule
++Inf    & exposant=0xFF, mantisse=0 & \code{1.0f / 0.0f} \\
+-Inf    & signe=1, exposant=0xFF    & \code{-1.0f / 0.0f} \\
+NaN     & exposant=0xFF, mantisse$\neq$0 & \code{sqrt(-1.0f)} \\
++0      & tous les bits à 0          & \code{0.0f} \\
+-0      & signe=1, reste à 0        & \code{-0.0f} \\
+Subnormal & exposant=0, mantisse$\neq$0 & très petits nombres \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Le cas de NaN est particulièrement piégeux : \code{NaN != NaN} est \textit{vrai} ! C'est la seule valeur en C++ qui n'est pas égale à elle-même. Pour tester si une valeur est NaN, il faut utiliser \code{std::isnan()}.
+
+\subsection{La cancellation catastrophique}
+
+C'est le problème le plus dangereux : quand on soustrait deux flottants presque égaux, le résultat perd presque tous ses bits significatifs. Exemple :
+
+\begin{align*}
+a &= 1234567.89 \quad \text{(stocké avec des erreurs d'arrondi)} \\
+b &= 1234567.00 \\
+a - b &\approx 0.875 \quad \text{au lieu de 0.89}
+\end{align*}
+
+C'est ce qui peut rendre la variance calculée par la méthode naïve \textit{négative} pour certains jeux de données — un résultat mathématiquement impossible !
+
+\section{Implémentation dans NkMath}
+
+\subsection{Float.h — les fonctions utilitaires}
+
+J'ai implémenté le fichier \file{NkMath/Float.h} qui regroupe toutes les fonctions utilitaires du module 1 :
+
+\begin{lstlisting}[caption={Accès aux bits d'un flottant (C++17 légal via memcpy)}]
+inline uint32_t floatBits(float f) {
+    uint32_t bits;
+    std::memcpy(&bits, &f, sizeof(float));
+    return bits;
+}
+
+void inspectFloat(float f) {
+    uint32_t bits     = floatBits(f);
+    uint32_t sign     = (bits >> 31) & 0x1;
+    uint32_t exponent = (bits >> 23) & 0xFF;
+    uint32_t mantissa = bits & 0x7FFFFF;
+    printf("Signe: %u | Exposant: %u | Mantisse: 0x%06X\n",
+           sign, exponent, mantissa);
+}
+\end{lstlisting}
+
+\textbf{Pourquoi \code{memcpy} et pas le cast direct ?} En C++17, accéder aux bits d'un \code{float} via un cast de pointeur vers \code{uint32_t*} est un comportement indéfini (\textit{undefined behaviour}) à cause des règles de \textit{strict aliasing}. Le \code{memcpy} est le seul moyen légal de faire ça.
+
+\subsection{Sommation de Kahan}
+
+Pour sommer précisément des millions de valeurs, l'algorithme de Kahan maintient une variable de compensation qui capture les bits perdus à chaque addition :
+
+\begin{lstlisting}[caption={Sommation de Kahan — précision compensée}]
+float kahanSumF(const float* data, int n) {
+    float sum  = 0.0f;
+    float comp = 0.0f;  // compensation des bits perdus
+    for (int i = 0; i < n; i++) {
+        float y = data[i] - comp;  // corriger l'erreur precedente
+        float t = sum + y;
+        comp    = (t - sum) - y;   // capturer les bits perdus dans y
+        sum     = t;
+    }
+    return sum;
+}
+\end{lstlisting}
+
+\textbf{Résultat concret :} pour sommer 1 000 000 fois 0.1f, \code{std::accumulate} donne 100011.55 (erreur de 11.55 !), alors que \code{kahanSumF} donne 100000.00 (correct).
+
+\subsection{Méthode de Welford}
+
+Pour calculer la variance de façon stable numériquement, j'ai implémenté la méthode de Welford qui fait tout en une seule passe sans jamais soustraire deux grands nombres :
+
+\begin{lstlisting}[caption={Variance de Welford — numériquement stable}]
+float varianceWelford(const float* data, int n) {
+    float mean = 0.0f, M2 = 0.0f;
+    for (int i = 0; i < n; i++) {
+        float delta  = data[i] - mean;
+        mean        += delta / (float)(i + 1);
+        float delta2 = data[i] - mean;
+        M2          += delta * delta2;
+    }
+    return M2 / (float)(n - 1);
+}
+\end{lstlisting}
+
+\section{Travaux Pratiques}
+
+\subsection{TP 1 — inspectFloat}
+
+Ce TP consiste à implémenter et tester \code{inspectFloat} sur 6 valeurs imposées. Voici un extrait des résultats obtenus :
+
+\begin{resultbox}[Résultat de inspectFloat(0.1f)]
+\texttt{float = 0.1000000015 (hex = 0x3DCCCCCD)} \\
+\texttt{Signe : 0 (positif)} \\
+\texttt{Exposant : 123 => biais 127 => $2^{-4}$} \\
+\texttt{Mantisse : 0x4CCCCD => 1.4CCCCD en hexa} \\
+\\
+\textbf{Analyse :} 0.1 est représenté par $2^{-4} \times 1.6000000238...\approx 0.1000000015$. C'est pour ça que \code{0.1f + 0.2f != 0.3f} !
+\end{resultbox}
+
+\subsection{TP 2 — Kahan et Welford}
+
+Pour démontrer les problèmes de précision :
+
+\begin{itemize}
+    \item \textbf{Sommation :} \code{std::accumulate} sur 1M de \code{0.1f} donne une erreur de 11.55, Kahan donne 0.000001.
+    \item \textbf{Variance naïve :} sur le tableau $\{10^8, 10^8, 1, 2\}$, la méthode naïve peut donner une variance \textit{négative} à cause de la cancellation catastrophique.
+    \item \textbf{Epsilon machine :} mesuré à \code{1.19209e-07}, correspond exactement à \code{std::numeric\_limits<float>::epsilon()}.
+\end{itemize}
+
+\subsection{TP 3 — NkMath/Float.h avec 33 tests unitaires}
+
+J'ai écrit 33 tests unitaires avec le framework \code{NkTestFramework} de \nkentseu{} :
+
+\begin{resultbox}[Résultats des tests S1]
+\texttt{Suite : NkMath::Float — Semaine 1} \\
+\texttt{33/33 tests passes} \\
+\texttt{[SUCCES] Tous les tests sont verts !}
+\end{resultbox}
+
+% ============================================================
+\chapter{Semaine 2 — Vecteurs (Vec2d, Vec3d, Vec4d)}
+% ============================================================
+
+\section{Ce que j'ai appris}
+
+Si le module 1 était sur les fondations numériques, le module 2 est sur la structure de données la plus omniprésente du pipeline 3D : le vecteur. Chaque position dans l'espace 3D, chaque direction, chaque pixel de l'image — tout ça, c'est un vecteur.
+
+\subsection{Pourquoi implémenter ses propres vecteurs ?}
+
+La réponse est en deux parties. Premièrement, la règle absolue du cours : zéro bibliothèque tierce. Deuxièmement, et c'est plus intéressant, c'est une question de \textbf{layout mémoire}. Pour passer des tableaux de vecteurs directement à \code{glVertexAttribPointer} (la fonction OpenGL qui envoie des données au GPU), il faut que les vecteurs soient des structures \textit{Plain Old Data} (POD) avec une disposition mémoire exacte et connue. D'où les \code{static\_assert} dans chaque structure.
+
+\subsection{Le produit scalaire (dot product)}
+
+Le produit scalaire $\mathbf{a} \cdot \mathbf{b} = a_x b_x + a_y b_y + a_z b_z = |\mathbf{a}||\mathbf{b}|\cos\theta$ est l'opération la plus utilisée du pipeline. Son interprétation géométrique est essentielle :
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+\textbf{Valeur} & \textbf{Signification} \\
+\midrule
+$\mathbf{a} \cdot \mathbf{b} = 0$  & Vecteurs perpendiculaires ($\theta = 90°$) \\
+$\mathbf{a} \cdot \mathbf{b} = 1$  & Même direction (si normalisés) \\
+$\mathbf{a} \cdot \mathbf{b} = -1$ & Directions opposées (si normalisés) \\
+$\mathbf{a} \cdot \mathbf{b} > 0$  & Angle aigu ($< 90°$) \\
+$\mathbf{a} \cdot \mathbf{b} < 0$  & Angle obtus ($> 90°$) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Le produit vectoriel (cross product)}
+
+Le produit vectoriel $\mathbf{a} \times \mathbf{b}$ donne un vecteur perpendiculaire aux deux, de norme $|\mathbf{a}||\mathbf{b}|\sin\theta$. Il est non-commutatif : $\mathbf{a} \times \mathbf{b} = -(\mathbf{b} \times \mathbf{a})$.
+
+$$
+\mathbf{a} \times \mathbf{b} = \begin{pmatrix} a_y b_z - a_z b_y \\ a_z b_x - a_x b_z \\ a_x b_y - a_y b_x \end{pmatrix}
+$$
+
+On peut vérifier facilement : $\mathbf{X} \times \mathbf{Y} = \mathbf{Z}$ (règle de la main droite, convention OpenGL).
+
+\subsection{Coordonnées homogènes (Vec4d)}
+
+C'est la notion qui m'a le plus surpris. Pour représenter positions et directions dans le même espace et permettre les translations dans une multiplication matricielle $4\times4$, on utilise une 4ème coordonnée $w$ :
+
+\begin{itemize}
+    \item $w = 1.0$ : c'est un \textbf{point} (la translation de la matrice s'applique)
+    \item $w = 0.0$ : c'est une \textbf{direction} (la translation ne s'applique pas)
+\end{itemize}
+
+La déhomogénéisation consiste à diviser $(x, y, z)$ par $w$ pour revenir à des coordonnées 3D.
+
+\section{Implémentation}
+
+\subsection{Vec2d}
+
+\begin{lstlisting}[caption={Extrait de Vec2d — layout mémoire garanti}]
+struct Vec2d {
+    double x, y;
+
+    Vec2d operator+(const Vec2d& o) const { return {x+o.x, y+o.y}; }
+    
+    Vec2d Normalized() const {
+        double n = Norm();
+        if (nearlyZero(n)) return Vec2d(0.0);  // vecteur nul -> zero
+        return {x/n, y/n};
+    }
+    // Acces par index : garanti contigu en C++17
+    double& operator[](int i) { return (&x)[i]; }
+};
+
+// Garantie de layout memoire pour upload GPU
+static_assert(sizeof(Vec2d) == 16, "Vec2d doit faire 16 octets");
+\end{lstlisting}
+
+\subsection{Gram-Schmidt — orthogonalisation}
+
+L'orthogonalisation de Gram-Schmidt transforme trois vecteurs quelconques en une base orthonormale. C'est utilisé notamment pour construire la matrice LookAt de la caméra :
+
+\begin{lstlisting}[caption={Gram-Schmidt — 3 étapes}]
+OrthoBasis GramSchmidt(Vec3d a, Vec3d b, Vec3d c) {
+    Vec3d u = a.Normalized();                         // etape 1
+    Vec3d v = (b - Project(b, u)).Normalized();       // etape 2
+    Vec3d w = (c - Project(c,u) - Project(c,v)).Normalized(); // etape 3
+    return {u, v, w};
+}
+\end{lstlisting}
+
+\section{Travaux Pratiques}
+
+\subsection{TP 1 — Vec2d complet (20 tests)}
+
+Tests couvrant : dot product, cross 2D, normalisation, accès par index, opérateurs arithmétiques, Lerp. La \code{static\_assert} sur \code{sizeof(Vec2d)==16} vérifie le layout mémoire.
+
+\subsection{TP 2 — Vec3d avec Gram-Schmidt}
+
+\begin{itemize}
+    \item \textbf{Cross product :} $\mathbf{X} \times \mathbf{Y} = \mathbf{Z}$ et $\mathbf{Y} \times \mathbf{X} = -\mathbf{Z}$ vérifiés à $10^{-15}$ près.
+    \item \textbf{Project + Reject :} $\text{proj}(\mathbf{a},\mathbf{b}) + \text{rej}(\mathbf{a},\mathbf{b}) = \mathbf{a}$ vérifié pour 10 paires.
+    \item \textbf{Gram-Schmidt :} orthonormalité vérifiée ($|\mathbf{u}|=1$, $\mathbf{u}\cdot\mathbf{v}=0$, etc.) sur 3 triplets.
+\end{itemize}
+
+\subsection{TP 3 — Vec4d + Projection perspective}
+
+J'ai projeté les 8 coins d'un cube unitaire en 2D avec une projection perspective simple $u = f_x \cdot X/Z + c_x$, et tracé les 12 arêtes dans une image PPM de $512 \times 512$ pixels (format simple sans bibliothèque, juste \code{fwrite}).
+
+\begin{resultbox}[Résultats des tests S2]
+\texttt{Suite : S2 — Vec2d, Vec3d, Vec4d} \\
+\texttt{24/24 tests passes} \\
+\texttt{[SUCCES] Tous les tests sont verts !}
+\end{resultbox}
+
+% ============================================================
+\chapter{Semaine 3 — Matrices (Mat3d, Mat4d)}
+% ============================================================
+
+\section{Ce que j'ai appris}
+
+Ce module est probablement celui qui demande le plus d'attention aux détails. Une simple erreur de convention peut rendre toutes les transformations incorrectes sans que ça soit visible au premier coup d'œil.
+
+\subsection{Convention column-major d'OpenGL}
+
+En mathématiques, on note les matrices en \textit{row-major} (ligne par ligne). OpenGL utilise la convention \textit{column-major} (colonne par colonne). Concrètement, pour une matrice $4\times4$ :
+
+$$
+M = \begin{pmatrix} m_{00} & m_{01} & m_{02} & m_{03} \\ m_{10} & \ldots \end{pmatrix}
+$$
+
+En mémoire column-major : \code{data[0]=m00, data[1]=m10, data[2]=m20, data[3]=m30, data[4]=m01, ...}
+
+L'accès en C++ devient donc : \code{data[col*4 + row]}. C'est contre-intuitif mais critique pour l'upload GPU avec \code{glUniformMatrix4fv(loc, 1, GL\_FALSE, data)} où \code{GL\_FALSE} signifie "déjà en column-major".
+
+\subsection{L'inverse par Gauss-Jordan avec pivot partiel}
+
+L'inversion d'une matrice $4\times4$ par Gauss-Jordan construit une matrice augmentée $[M | I]$ et applique des opérations élémentaires pour la transformer en $[I | M^{-1}]$. Le pivot partiel (chercher le pivot le plus grand en valeur absolue) est essentiel pour la stabilité numérique.
+
+\subsection{La formule de Rodrigues}
+
+Pour construire une matrice de rotation d'angle $\theta$ autour d'un axe unitaire $\hat{n} = (n_x, n_y, n_z)$ :
+
+$$
+R = c \cdot I + (1-c) \hat{n}\hat{n}^T + s \begin{pmatrix} 0 & -n_z & n_y \\ n_z & 0 & -n_x \\ -n_y & n_x & 0 \end{pmatrix}
+$$
+
+où $c = \cos\theta$ et $s = \sin\theta$.
+
+\subsection{LookAt — matrice View}
+
+La matrice LookAt construit le repère de la caméra à partir de sa position, du point regardé, et de la direction "haut" :
+
+$$
+\text{forward} = \text{normalize}(\text{target} - \text{eye}), \quad
+\text{right} = \text{normalize}(\text{forward} \times \text{worldUp}), \quad
+\text{up} = \text{right} \times \text{forward}
+$$
+
+\section{Implémentation}
+
+\begin{lstlisting}[caption={Accès column-major dans Mat4d}]
+struct Mat4d {
+    double data[16];  // column-major : data[col*4 + row]
+    
+    double& operator()(int row, int col) {
+        return data[col*4 + row];  // !! column-major !!
+    }
+    
+    static Mat4d Identity() {
+        Mat4d m;
+        m(0,0) = m(1,1) = m(2,2) = m(3,3) = 1.0;
+        return m;
+    }
+};
+\end{lstlisting}
+
+\begin{lstlisting}[caption={LookAt — Matrice View}]
+Mat4d LookAt(const Vec3d& eye, const Vec3d& target, const Vec3d& worldUp) {
+    Vec3d f = (target - eye).Normalized();
+    Vec3d r = Cross(f, worldUp).Normalized();
+    Vec3d u = Cross(r, f);
+    Mat4d V = Mat4d::Identity();
+    V(0,0)=r.x; V(0,1)=r.y; V(0,2)=r.z; V(0,3)=-Dot(r,eye);
+    V(1,0)=u.x; V(1,1)=u.y; V(1,2)=u.z; V(1,3)=-Dot(u,eye);
+    V(2,0)=-f.x;V(2,1)=-f.y;V(2,2)=-f.z;V(2,3)= Dot(f,eye);
+    return V;
+}
+\end{lstlisting}
+
+\section{Travaux Pratiques}
+
+\subsection{TP 1 — Mat4d et Inverse}
+
+\begin{itemize}
+    \item \code{M $\times$ Identity() == M} vérifié pour 10 matrices aléatoires.
+    \item \code{M $\times$ M$^{-1}$ == I} vérifié à $10^{-10}$ près (norme de Frobenius) pour 5 matrices bien conditionnées.
+    \item \code{Inverse()} retourne \code{false} pour une matrice nulle (singulière).
+    \item Rodrigues : \code{RotateAxis(\{0,1,0\}, $\pi/2$) $\times$ (1,0,0,1)} donne bien $(0, 0, -1, 1)$.
+\end{itemize}
+
+\subsection{TP 2 — Rasteriseur logiciel avec LookAt}
+
+J'ai implémenté un mini-rasteriseur logiciel complet :
+\begin{enumerate}
+    \item Cube unitaire centré à l'origine.
+    \item Vue avec \code{LookAt(eye=\{0,1,3\}, target=\{0,0,0\}, up=\{0,1,0\})}.
+    \item Projection perspective avec fov=60°.
+    \item Tracé des 12 arêtes en rouge (algorithme de Bresenham).
+    \item Génération de 10 frames PPM $512\times512$ avec rotation progressive (36° par frame).
+\end{enumerate}
+
+\subsection{TP 3 — TRS et décomposition}
+
+La matrice TRS = T $\times$ R $\times$ S est construite avec l'ordre correct : d'abord l'échelle, puis la rotation, puis la translation. J'ai vérifié pour 20 triplets $(T, R, S)$ aléatoires que $M \times M^{-1} \approx I$.
+
+\begin{resultbox}[Résultats des tests S3]
+\texttt{Suite : S3 — Mat3d, Mat4d, TRS} \\
+\texttt{22/22 tests passes} \\
+\texttt{[SUCCES] Tous les tests sont verts !}
+\end{resultbox}
+
+% ============================================================
+\chapter{Semaine 4 — Quaternions}
+% ============================================================
+
+\section{Ce que j'ai appris}
+
+Les quaternions ont la réputation d'être complexes et un peu mystérieux. Après ce module, je pense que c'est surtout parce qu'on essaie souvent de les expliquer par leur formulation algébrique ($i^2 = j^2 = k^2 = ijk = -1$) sans partir du problème qu'ils résolvent.
+
+\subsection{Le problème du gimbal lock}
+
+Les angles d'Euler (yaw, pitch, roll) ont un défaut fondamental : quand pitch $= \pm 90°$, les axes yaw et roll deviennent coplanaires et le système perd un degré de liberté. On ne peut plus représenter certaines rotations. C'est le \textbf{gimbal lock}.
+
+En pratique dans notre pipeline AR, si on interpole entre deux orientations avec des angles d'Euler via LERP, le chemin d'interpolation n'est pas le chemin le plus court. Ça produit des mouvements visuellement incorrects.
+
+\subsection{Quaternions unitaires}
+
+Un quaternion $q = w + xi + yj + zk$ avec $\|q\| = 1$ représente une rotation de $2 \arccos(w)$ radians autour de l'axe $(x, y, z)$. La construction depuis axe-angle :
+
+$$
+q = \left(\cos\frac{\theta}{2},\ n_x \sin\frac{\theta}{2},\ n_y \sin\frac{\theta}{2},\ n_z \sin\frac{\theta}{2}\right)
+$$
+
+\subsection{SLERP — interpolation sphérique}
+
+Le SLERP (Spherical Linear intERPolation) suit le chemin le plus court sur la sphère des quaternions unitaires, avec une vitesse angulaire constante :
+
+$$
+\text{Slerp}(q_a, q_b, t) = \frac{\sin((1-t)\Omega)}{\sin\Omega} q_a + \frac{\sin(t\Omega)}{\sin\Omega} q_b
+$$
+
+où $\Omega = \arccos(q_a \cdot q_b)$.
+
+\begin{warnbox}[Point important]
+Si $q_a \cdot q_b < 0$, les deux quaternions sont sur des hémisphères opposés de la sphère $S^3$. Il faut inverser l'un d'eux pour prendre le chemin le plus court. Sans cette correction, SLERP fait un détour de 360° au lieu de prendre le chemin direct.
+\end{warnbox}
+
+\subsection{Méthode de Shepperd — Mat3 vers Quat}
+
+La conversion d'une matrice de rotation en quaternion doit être stable numériquement. La méthode de Shepperd choisit entre 4 formules selon quel composant du quaternion est dominant (évite les divisions par des valeurs proches de zéro) :
+
+\begin{lstlisting}[caption={Méthode de Shepperd — branche trace positive}]
+Quat FromMat3(const Mat3d& R) {
+    double trace = R.Trace();
+    if (trace > 0.0) {
+        double s = 0.5 / std::sqrt(trace + 1.0);
+        return { 0.25/s,
+                 (R(2,1)-R(1,2))*s,
+                 (R(0,2)-R(2,0))*s,
+                 (R(1,0)-R(0,1))*s }.Normalized();
+    }
+    // ... branches x, y, z dominants
+}
+\end{lstlisting}
+
+\section{Travaux Pratiques}
+
+\subsection{TP 1 — Quaternions complets}
+
+Tests couvrant :
+\begin{itemize}
+    \item \code{Rotate(FromAxisAngle(\{0,1,0\}, $\pi/2$), (1,0,0)) $\approx$ (0,0,-1)} à $10^{-10}$ près.
+    \item Aller-retour \code{Quat $\rightarrow$ Mat3 $\rightarrow$ Quat} sur 50 quaternions aléatoires : 48/50 minimum verts (les 2 restants échouent à cause de l'ambiguïté de signe antipodal, qui est normale).
+    \item \code{q $\times$ q.Inverse() = identité} vérifié.
+    \item Non-commutativité du produit : $\text{Rot}_X \cdot \text{Rot}_Y \neq \text{Rot}_Y \cdot \text{Rot}_X$.
+\end{itemize}
+
+\subsection{TP 2 — Animation SLERP vs LERP}
+
+J'ai généré 60 frames en format PPM montrant la rotation d'un cube animé de l'orientation $q_a$ (identité) vers $q_b$ (120° autour de l'axe $(1,1,0)$) :
+
+\begin{itemize}
+    \item \textbf{SLERP (rouge) :} vitesse angulaire constante sur toute l'animation. Le quaternion reste unitaire à $10^{-10}$ près à chaque frame.
+    \item \textbf{LERP (bleu) :} vitesse angulaire variable — le cube ralentit au milieu et accélère aux extrémités.
+\end{itemize}
+
+La différence est visuellement évidente en comparant les 60 frames des deux animations.
+
+\begin{resultbox}[Résultats des tests S4]
+\texttt{Suite : S4 — Quat, SLERP, Shepperd} \\
+\texttt{8/8 tests passes} \\
+\texttt{[SUCCES] Tous les tests sont verts !}
+\end{resultbox}
+
+% ============================================================
+\chapter*{Conclusion}
+\addcontentsline{toc}{chapter}{Conclusion}
+% ============================================================
+
+Ces quatre semaines m'ont permis de construire une bibliothèque mathématique solide — \nkmath{} — qui servira de fondation pour tout le pipeline de réalité augmentée du semestre. Chaque module construit sur le précédent : les vecteurs utilisent les fonctions de \file{Float.h}, les matrices utilisent les vecteurs, les quaternions utilisent les matrices.
+
+Ce que j'ai surtout appris, ce n'est pas juste à coder des vecteurs ou des matrices. C'est à comprendre \textit{pourquoi} chaque décision de conception existe :
+\begin{itemize}
+    \item Le \code{memcpy} au lieu du cast direct pour accéder aux bits des flottants (UB).
+    \item Le stockage column-major pour la compatibilité OpenGL.
+    \item Le pivot partiel dans Gauss-Jordan pour la stabilité numérique.
+    \item La correction du signe dans SLERP pour prendre le chemin le plus court.
+\end{itemize}
+
+\medskip
+
+\begin{infobox}[Bilan des tests]
+\begin{center}
+\begin{tabular}{lrr}
+\toprule
+\textbf{Module} & \textbf{Tests} & \textbf{Résultat} \\
+\midrule
+S1 — IEEE 754, Float.h      & 33 & 33/33 \\
+S2 — Vec2d, Vec3d, Vec4d    & 24 & 24/24 \\
+S3 — Mat3d, Mat4d, TRS      & 22 & 22/22 \\
+S4 — Quaternions, SLERP     & 8  & 8/8   \\
+\midrule
+\textbf{TOTAL}              & \textbf{87} & \textbf{87/87} \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{infobox}
+
+\medskip
+
+Pour les semaines suivantes, il reste à implémenter la SVD (\nkmath{} Module 05) et la bibliothèque d'images \code{NkImage} (Module 06), pour finalement pouvoir détecter des marqueurs ArUco et faire tourner un objet 3D par-dessus en temps réel.
+
+% ============================================================
+\appendix
+\chapter{Structure du projet}
+% ============================================================
+
+\begin{lstlisting}[language=bash, caption={Arborescence du projet AR\_NkMath}]
+AR_NkMath/
+├── AR_NkMath.jenga              # Fichier build Jenga (Python DSL)
+├── NkMath/
+│   ├── include/
+│   │   ├── NkMath.h             # En-tete principal
+│   │   └── NkMath/
+│   │       ├── NkTestFramework.h  # Framework de tests (Nkentseu)
+│   │       ├── Float.h            # S1: IEEE 754, Kahan, Welford
+│   │       ├── Vec2d.h            # S2: Vecteur 2D
+│   │       ├── Vec3d.h            # S2: Vecteur 3D + Gram-Schmidt
+│   │       ├── Vec4d.h            # S2: Coordonnees homogenes
+│   │       ├── Mat3d.h            # S3: Matrice 3x3
+│   │       ├── Mat4d.h            # S3: Matrice 4x4, LookAt, TRS
+│   │       └── Quat.h             # S4: Quaternions, SLERP
+│   └── tests/
+│       └── AllTests.cpp           # 87 tests unitaires (4 semaines)
+└── TPs/
+    ├── S1_TP1_inspectFloat/       # TP IEEE 754
+    ├── S2_TP3_Vec4d_Projection/   # TP Vecteurs + projection PPM
+    ├── S3_TP2_Rasteriseur/        # TP Rasteriseur logiciel 10 frames
+    └── S4_TP2_SLERP/              # TP Animation SLERP vs LERP 60 frames
+\end{lstlisting}
+
+\chapter{Compilation et utilisation}
+
+\section{Avec Jenga (méthode recommandée)}
+
+\begin{lstlisting}[language=bash]
+# Cloner Nkentseu et Jenga
+git clone https://github.com/RihenUniverse/Jenga.git
+pip install -e Jenga/
+
+# Copier notre module dans la structure Nkentseu
+# puis lancer la compilation
+jenga build
+jenga build --project NkMath_Tests   # executer les tests
+jenga build --project TP_S1          # TP Semaine 1
+jenga build --project TP_S2          # TP Semaine 2
+jenga build --project TP_S3          # TP Semaine 3 (genere PPM)
+jenga build --project TP_S4          # TP Semaine 4 (SLERP animation)
+\end{lstlisting}
+
+\section{Compilation directe (g++ pour test rapide)}
+
+\begin{lstlisting}[language=bash]
+# Tests unitaires toutes semaines
+g++ -std=c++17 -I NkMath/include -o AllTests NkMath/tests/AllTests.cpp
+./AllTests   # -> 87/87 tests passes
+
+# TP Semaine 1
+g++ -std=c++17 -I NkMath/include -o tp_s1 \
+    TPs/S1_TP1_inspectFloat/TP_S1_IEEE754.cpp
+./tp_s1
+
+# TP Semaine 3 (genere /tmp/cube_frame00.ppm ... cube_frame09.ppm)
+g++ -std=c++17 -I NkMath/include -o tp_s3 \
+    TPs/S3_TP2_Rasteriseur/TP_S3_Matrices.cpp
+./tp_s3
+\end{lstlisting}
+
+\end{document}
