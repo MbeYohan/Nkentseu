@@ -231,4 +231,4 @@ def configure_sandbox_app(project_name: str, source_file: str, app_id_suffix: st
                         "uuid", "ole32", "dinput8", "dxguid"
                     ])
 
-configure_sandbox_app("Sandbox", "src/**.cpp", "sandbox")
+configure_sandbox_app("Sandbox", "src/**/*.cpp", "sandbox")

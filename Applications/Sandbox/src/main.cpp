@@ -1,7 +1,7 @@
-// ============================================================================
-// Sandbox/src/main.cpp
-// Pattern A : Dispatcher typé (push - événementiel)
-// ============================================================================
+// =============================================================================
+// Sandbox/src/main.cpp  — Application de demonstration Nkentseu
+// Pattern : Dispatcher evenementiel (push)
+// =============================================================================
 
 #include "NKWindow/Core/NkWindow.h"
 #include "NKWindow/Core/NkSystem.h"
@@ -23,77 +23,71 @@
 using namespace nkentseu;
 using namespace nkentseu::math;
 
-// ============================================================================
+// =============================================================================
 int nkmain(const nkentseu::NkEntryState& /*state*/)
 {
     // -------------------------------------------------------------------------
-    // 1. Initialisation
+    // 1. Initialisation du systeme
     // -------------------------------------------------------------------------
-    if (!NkInitialise({ .appName = "NkWindow Sandbox Pattern A" })) {
-        logger.Error("[Sandbox] NkInitialise FAILED");
+    if (!NkInitialise({ .appName = "AR From Scratch — Sandbox Demo" })) {
+        logger.Error("[Sandbox] NkInitialise a echoue");
         return -1;
     }
 
     // -------------------------------------------------------------------------
-    // 2. Fenêtre
+    // 2. Creation de la fenetre
     // -------------------------------------------------------------------------
-    NkWindowConfig cfg;
-    cfg.title       = "NkWindow Sandbox - Pattern A (Dispatcher)";
-    cfg.width       = 900;
-    cfg.height      = 600;
-    cfg.centered    = true;
-    cfg.resizable   = true;
-    cfg.dropEnabled = true;
+    NkWindowConfig wCfg;
+    wCfg.title       = "AR From Scratch — Sandbox (Semaines 1-6)";
+    wCfg.width       = 900;
+    wCfg.height      = 600;
+    wCfg.centered    = true;
+    wCfg.resizable   = true;
+    wCfg.dropEnabled = true;
 
-    NkWindow window(cfg);
+    NkWindow window(wCfg);
     if (!window.IsOpen()) {
-        logger.Error("[Sandbox] Window creation FAILED");
+        logger.Error("[Sandbox] Echec creation fenetre");
         NkClose();
         return -2;
     }
 
     // -------------------------------------------------------------------------
-    // 3. Renderer
+    // 3. Renderer software
     // -------------------------------------------------------------------------
-    NkRendererConfig rcfg;
-    rcfg.api                   = NK_SANDBOX_RENDERER_API;
-    rcfg.autoResizeFramebuffer = true;
+    NkRendererConfig rCfg;
+    rCfg.api                   = NK_SANDBOX_RENDERER_API;
+    rCfg.autoResizeFramebuffer = true;
 
     mem::NkUniquePtr<NkRenderer> renderer;
-    if (rcfg.api != NkRendererApi::NK_NONE) {
+    if (rCfg.api != NkRendererApi::NK_NONE) {
         renderer = mem::NkMakeUnique<NkRenderer>();
-        if (!renderer->Create(window, rcfg)) {
-            logger.Error("[Sandbox] Renderer creation FAILED");
+        if (!renderer->Create(window, rCfg)) {
+            logger.Error("[Sandbox] Echec creation renderer");
             NkClose();
             return -3;
         }
     }
 
-    
     // -------------------------------------------------------------------------
     // 4. Boucle principale
     // -------------------------------------------------------------------------
-    auto& eventSystem = NkEvents();
-
-    bool running = true;
-    float timeSeconds = 0.f;
+    auto& evtSys = NkEvents();
+    bool  alive  = true;
     NkChrono chrono;
-    NkElapsedTime elapsed;
 
-    while (running && window.IsOpen())
+    while (alive && window.IsOpen())
     {
-        NkElapsedTime e = chrono.Reset();
+        chrono.Reset();
 
-        // --- Pattern A : Dispatcher typé (OnEvent pour chaque event)
-        while (NkEvent* event = eventSystem.PollEvent())
-            if (event->Is<nkentseu::NkWindowCloseEvent>())
-                running = false;
+        while (NkEvent* evt = evtSys.PollEvent())
+            if (evt->Is<nkentseu::NkWindowCloseEvent>())
+                alive = false;
 
-        if (!running || !window.IsOpen())
-            break;
+        if (!alive || !window.IsOpen()) break;
 
-        // --- Cap 60 fps ---
-        elapsed = chrono.Elapsed();
+        // Cap a 60 fps
+        NkElapsedTime elapsed = chrono.Elapsed();
         if (elapsed.milliseconds < 16)
             NkChrono::Sleep(16 - elapsed.milliseconds);
         else
@@ -103,9 +97,7 @@ int nkmain(const nkentseu::NkEntryState& /*state*/)
     // -------------------------------------------------------------------------
     // 5. Nettoyage
     // -------------------------------------------------------------------------
-    if (renderer)
-        renderer->Shutdown();
-
+    if (renderer) renderer->Shutdown();
     window.Close();
     NkClose();
     return 0;
